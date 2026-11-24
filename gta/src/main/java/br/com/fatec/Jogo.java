@@ -1,5 +1,6 @@
 package br.com.fatec;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JOptionPane;
@@ -7,6 +8,7 @@ import javax.swing.JOptionPane;
 public class Jogo {
     private final static int CORRIDAS = 3;
     private final static int NITROS = 2;
+    private final static int TAMANHO_RANKING = 5;
 
     public static StringBuilder gerarTabela(List<Piloto> classificacao, int corrida) {
         var tabela = new StringBuilder();
@@ -15,6 +17,21 @@ public class Jogo {
             tabela.append((j + 1) + ". " + classificacao.get(j) + "\n");
         }
         return tabela;
+    }
+
+    public static void ranking(){
+        var ranking = PartidaDAO.listar();
+        ranking.sort(Comparator.comparingInt(Partida::getPontuacao).reversed());
+        var listaRanking = new StringBuilder();
+        listaRanking.append("RANKING\n");
+        int tamanhoRanking = Math.min(ranking.size(), TAMANHO_RANKING); 
+        for(int i = 0; i < tamanhoRanking; i++) {
+            Partida p = ranking.get(i);
+            listaRanking.append(
+                (i + 1) + ". " + p.getJogador() + " - " + p.getPontuacao() + " pontos\n"
+            );
+        }
+        JOptionPane.showMessageDialog(null, listaRanking);
     }
 
     public static void campeonato() {
@@ -118,6 +135,7 @@ public class Jogo {
                     campeonato();
                     break;
                 case 2:
+                    ranking();
                     break;
                 case 0:
                     JOptionPane.showMessageDialog(null, "Ate a proxima!");
